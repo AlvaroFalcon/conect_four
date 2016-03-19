@@ -276,6 +276,7 @@ class ConnectFour(TicTacToe):
 
     def make_move(self, move, state):
         if move not in state.moves:
+            print("Movimiento invalido, intentelo de nuevo")
             return state  # Illegal move has no effect
         board = state.board.copy()
         board[move] = state.to_move

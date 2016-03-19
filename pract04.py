@@ -1,4 +1,5 @@
 import games
+import heuristic
 
 game = games.ConnectFour()
 state = game.initial
@@ -44,11 +45,11 @@ while True:
         else:
             print "Thinking..."
             print_board(state)
-            move = games.minimax_decision(state, game)
-            #move = games.alphabeta_full_search(state, game)
+            move = games.alphabeta_search(state, game, d=2, cutoff_test=None, eval_fn=heuristic.compute_utility(state))
+            # move = games.alphabeta_full_search(state, game)
             print_board(state)
             state = game.make_move(move, state)
-            player = 'O'
+            player = 'X'
         print "-------------------"
     if game.terminal_test(state):
         game.display(state)
