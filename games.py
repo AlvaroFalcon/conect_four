@@ -265,7 +265,8 @@ class ConnectFour(TicTacToe):
 
     def __init__(self, h=7, v=6, k=4):
         update(self, h=h, v=v, k=k)
-        moves = [(6, y) for y in range(0, h)]
+        moves = [(6, y) for y in range(0, v)]
+        print(moves)
         self.initial = Struct(to_move='X', utility=0, board={}, moves=moves)
 
     def legal_moves(self, state):
@@ -309,6 +310,7 @@ class ConnectFour(TicTacToe):
 
     def compute_utility(self, board, move, player):
         "If X wins with this move, return 1; if O return -1; else return 0."
+        print(board)
         if (self.k_in_row(board, move, player, (0, 1)) or
                 self.k_in_row(board, move, player, (1, 0)) or
                 self.k_in_row(board, move, player, (1, -1)) or

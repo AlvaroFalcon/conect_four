@@ -42,8 +42,13 @@ while True:
         if player == 'X':
             player_move()
         else:
-            # maquina
-            print ()
+            print "Thinking..."
+            print_board(state)
+            move = games.minimax_decision(state, game)
+            #move = games.alphabeta_full_search(state, game)
+            print_board(state)
+            state = game.make_move(move, state)
+            player = 'O'
         print "-------------------"
     if game.terminal_test(state):
         game.display(state)
