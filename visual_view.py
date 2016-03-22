@@ -14,7 +14,7 @@ red = (255, 0, 0)
 width = 20
 height = 20
 margin = 5
-
+hintflag = 0
 grid = []
 for x in range(7):
     grid.append([])
@@ -108,6 +108,7 @@ while not done:
                                                        eval_fn=heuristic.compute_utility(state))
                     hints -= 1
                     print hint_move
+                    hintflag = 1
         elif evento.type == pygame.MOUSEBUTTONDOWN:
             if mode == 1:
                 pos = pygame.mouse.get_pos()
@@ -144,6 +145,13 @@ while not done:
                               (margin + height) * x + margin,
                               width,
                               height])
+    texto = fuente.render("Pulsa 'H' para obtener una pista", True, white)
+    pantalla.blit(texto, [0, 180])
+    texto = fuente.render("Pistas restantes: " + str(hints), True, red)
+    pantalla.blit(texto, [0, 210])
+    if hintflag == 1:
+        texto = fuente.render("Has probado a mover en la posicion "+str(hint_move)+" ?", True, white)
+        pantalla.blit(texto, [0, 235])
     pygame.display.flip()
     if mode != 1 and player == 'O':
         move = games.alphabeta_search(state, game, d=difficult, cutoff_test=None,
