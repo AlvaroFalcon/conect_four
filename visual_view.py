@@ -18,15 +18,22 @@ width = 20
 height = 20
 margin = 5
 hint_flag = 0
-grid = []
-for x in range(7):
-    grid.append([])
-    for y in range(6):
-        grid[x].append(0)
+
+
+def init_grid():
+    global grid, x, y
+    grid = []
+    for x in range(7):
+        grid.append([])
+        for y in range(6):
+            grid[x].append(0)
+
+
+init_grid()
 
 pygame.init()
 hints = 5
-pantalla = pygame.display.set_mode([700, 500])
+screen = pygame.display.set_mode([700, 500])
 
 pygame.display.set_caption("Connect 4")
 
@@ -42,64 +49,79 @@ show_intro = True
 intro_page = 1
 
 
+def display_endgame():
+    global texto
+    screen.fill(black)
+    texto = fuente.render("Game Over", True, white)
+    texto_rect = texto.get_rect()
+    t_x = screen.get_width() / 2 - texto_rect.width / 2
+    t_y = screen.get_height() / 2 - texto_rect.height / 2
+    screen.blit(texto, [t_x, t_y])
+    texto = fuente.render("Ganador: jugador '" + str(player) + "'", True, red)
+    screen.blit(texto, [t_x - 40, t_y + 40])
+    texto = fuente.render("Presione ESC para salir", True, red)
+    screen.blit(texto, [0, 470])
+    pygame.display.flip()
+
+
 def display_intro():
     global texto, difficult
     if intro_page == 1:
         texto = fuente.render("4 en raya", True, white)
-        pantalla.blit(texto, [10, 10])
+        screen.blit(texto, [10, 10])
 
         texto = fuente.render("Realizado por:", True, red)
-        pantalla.blit(texto, [500, 400])
+        screen.blit(texto, [500, 400])
 
         texto = fuente.render("Alvaro Falcon Morales", True, white)
-        pantalla.blit(texto, [400, 445])
+        screen.blit(texto, [400, 445])
         texto = fuente.render("Stefan Hautz", True, white)
-        pantalla.blit(texto, [400, 470])
+        screen.blit(texto, [400, 470])
     if intro_page == 2:
         texto = fuente.render("Pulse m para cambiar la modalidad", True, white)
-        pantalla.blit(texto, [10, 10])
+        screen.blit(texto, [10, 10])
         texto = fuente.render("Y de click para empezar!", True, white)
-        pantalla.blit(texto, [10, 35])
+        screen.blit(texto, [10, 35])
         if mode == 1:
             texto = fuente.render("Modo: Multiplayer", True, white)
-            pantalla.blit(texto, [10, 90])
+            screen.blit(texto, [10, 90])
         if mode == 2:
             texto = fuente.render("Modo: vs CPU", True, white)
-            pantalla.blit(texto, [10, 90])
+            screen.blit(texto, [10, 90])
             texto = fuente.render("Dificultad: Facil", True, white)
             difficult = 1
-            pantalla.blit(texto, [10, 120])
+            screen.blit(texto, [10, 120])
         if mode == 3:
             texto = fuente.render("Modo: vs CPU", True, white)
-            pantalla.blit(texto, [10, 90])
+            screen.blit(texto, [10, 90])
             texto = fuente.render("Dificultad: Medio", True, white)
             difficult = 5
-            pantalla.blit(texto, [10, 120])
+            screen.blit(texto, [10, 120])
         if mode == 4:
             texto = fuente.render("Modo: vs CPU", True, white)
-            pantalla.blit(texto, [10, 90])
+            screen.blit(texto, [10, 90])
             texto = fuente.render("Dificultad: Dificil", True, white)
             difficult = 10
-            pantalla.blit(texto, [10, 120])
+            screen.blit(texto, [10, 120])
 
 
 def display_igtexts():
     global texto
     texto = fuente.render("Pulsa 'H' para obtener una pista", True, white)
-    pantalla.blit(texto, [0, 180])
+    screen.blit(texto, [0, 180])
     texto = fuente.render("Pistas restantes: " + str(hints), True, red)
-    pantalla.blit(texto, [0, 210])
+    screen.blit(texto, [0, 210])
     texto = fuente.render(player_log, True, blue)
-    pantalla.blit(texto, [160, 0])
+    screen.blit(texto, [160, 0])
     texto = fuente.render(player2_log, True, red)
-    pantalla.blit(texto, [160, 25])
+    screen.blit(texto, [160, 25])
     texto = fuente.render(cpu_log, True, red)
-    pantalla.blit(texto, [160, 20])
+    screen.blit(texto, [160, 20])
     texto = fuente.render("Turno del jugador '" + str(player) + "'", True, white)
-    pantalla.blit(texto, [0, 470])
+    screen.blit(texto, [0, 470])
     if hint_flag == 1:
         texto = fuente.render("Has probado a mover en la posicion " + str(hint_move) + " ?", True, white)
-        pantalla.blit(texto, [0, 235])
+        screen.blit(texto, [0, 235])
 
 
 def cpu_play():
@@ -121,12 +143,17 @@ def display_board():
                 color = blue
             elif grid[x][y] == 2:
                 color = red
-            pygame.draw.rect(pantalla,
+            pygame.draw.rect(screen,
                              color,
                              [(margin + width) * y + margin,
                               (margin + height) * x + margin,
                               width,
                               height])
+
+
+def play_end_music():
+    pygame.mixer.music.load('ff.mp3')
+    pygame.mixer.music.play()
 
 
 def single_player():
@@ -160,62 +187,57 @@ def player_play():
 
 
 while not done and show_intro:
-    for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
             done = True
-        if evento.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN:
             intro_page += 1
             if intro_page == 3:
                 show_intro = False
-        if evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_m:
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_m:
                 mode += 1
                 if mode == 5:
                     mode = 1
 
-    pantalla.fill(black)
+    screen.fill(black)
     display_intro()
     reloj.tick(20)
     pygame.display.flip()
 
 while not done:
-    for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
-            hecho = True
-        elif evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_h:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_h:
                 if hints > 0:
                     hint_move = games.alphabeta_search(state, game, d=6, cutoff_test=None,
                                                        eval_fn=heuristic.compute_utility(state))
                     hints -= 1
                     hint_flag = 1
-        elif evento.type == pygame.MOUSEBUTTONDOWN:
+        elif event.type == pygame.MOUSEBUTTONDOWN:
             if mode == 1:
                 single_player()
             else:
                 player_play()
-    pantalla.fill(black)
+    screen.fill(black)
     display_board()
     display_igtexts()
     pygame.display.flip()
     if mode != 1 and player == 'O':
         cpu_play()
     if game.terminal_test(state):
-        print "Final de la partida"
-        print "Ganador: " + player
         done = True
+
+play_end_music()
 while credit_flag:
-    for evento in pygame.event.get():
-        if evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_ESCAPE:
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
                 credit_flag = False
-    pantalla.fill(black)
-    texto = fuente.render("Game Over", True, white)
-    texto_rect = texto.get_rect()
-    texto_x = pantalla.get_width() / 2 - texto_rect.width / 2
-    texto_y = pantalla.get_height() / 2 - texto_rect.height / 2
-    pantalla.blit(texto, [texto_x, texto_y])
-    pygame.display.flip()
+    display_endgame()
+
 reloj.tick(20)
 
 pygame.quit()
