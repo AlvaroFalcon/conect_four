@@ -1,18 +1,25 @@
 import pygame
+import games
+import heuristic
 
-NEGRO = (0, 0, 0)
-BLANCO = (255, 255, 255)
-VERDE = (0, 255, 0)
-ROJO = (255, 0, 0)
-LARGO = 20
-ALTO = 20
-MARGEN = 5
+game = games.ConnectFour()
+state = game.initial
+
+player = 'X'
+
+black = (0, 0, 0)
+white = (255, 255, 255)
+blue = (0, 0, 255)
+red = (255, 0, 0)
+width = 20
+height = 20
+margin = 5
 
 grid = []
-for fila in range(7):
+for x in range(7):
     grid.append([])
-    for columna in range(6):
-        grid[fila].append(0)
+    for y in range(6):
+        grid[x].append(0)
 
 pygame.init()
 
@@ -45,44 +52,44 @@ while not done and show_intro:
                 if mode == 5:
                     mode = 1
 
-    pantalla.fill(NEGRO)
+    pantalla.fill(black)
 
     if intro_page == 1:
-        texto = fuente.render("4 en raya", True, BLANCO)
+        texto = fuente.render("4 en raya", True, white)
         pantalla.blit(texto, [10, 10])
 
-        texto = fuente.render("Realizado por:", True, ROJO)
+        texto = fuente.render("Realizado por:", True, red)
         pantalla.blit(texto, [500, 400])
 
-        texto = fuente.render("Alvaro Falcon Morales", True, BLANCO)
+        texto = fuente.render("Alvaro Falcon Morales", True, white)
         pantalla.blit(texto, [400, 445])
-        texto = fuente.render("Stefan Hautz", True, BLANCO)
+        texto = fuente.render("Stefan Hautz", True, white)
         pantalla.blit(texto, [400, 470])
 
     if intro_page == 2:
-        texto = fuente.render("Pulse m para cambiar la modalidad", True, BLANCO)
+        texto = fuente.render("Pulse m para cambiar la modalidad", True, white)
         pantalla.blit(texto, [10, 10])
-        texto = fuente.render("Y de click para empezar!", True, BLANCO)
+        texto = fuente.render("Y de click para empezar!", True, white)
         pantalla.blit(texto, [10, 35])
         if mode == 1:
-            texto = fuente.render("Modo: Multiplayer", True, BLANCO)
+            texto = fuente.render("Modo: Multiplayer", True, white)
             pantalla.blit(texto, [10, 90])
         if mode == 2:
-            texto = fuente.render("Modo: vs CPU", True, BLANCO)
+            texto = fuente.render("Modo: vs CPU", True, white)
             pantalla.blit(texto, [10, 90])
-            texto = fuente.render("Dificultad: Facil", True, BLANCO)
+            texto = fuente.render("Dificultad: Facil", True, white)
             difficult = 1
             pantalla.blit(texto, [10, 120])
         if mode == 3:
-            texto = fuente.render("Modo: vs CPU", True, BLANCO)
+            texto = fuente.render("Modo: vs CPU", True, white)
             pantalla.blit(texto, [10, 90])
-            texto = fuente.render("Dificultad: Medio", True, BLANCO)
+            texto = fuente.render("Dificultad: Medio", True, white)
             difficult = 5
             pantalla.blit(texto, [10, 120])
         if mode == 4:
-            texto = fuente.render("Modo: vs CPU", True, BLANCO)
+            texto = fuente.render("Modo: vs CPU", True, white)
             pantalla.blit(texto, [10, 90])
-            texto = fuente.render("Dificultad: Dificil", True, BLANCO)
+            texto = fuente.render("Dificultad: Dificil", True, white)
             difficult = 10
             pantalla.blit(texto, [10, 120])
 
@@ -95,23 +102,36 @@ while not done:
         if evento.type == pygame.QUIT:
             hecho = True
         elif evento.type == pygame.MOUSEBUTTONDOWN:
-            pos = pygame.mouse.get_pos()
-            columna = pos[0] // (LARGO + MARGEN)
-            fila = pos[1] // (ALTO + MARGEN)
-            grid[fila][columna] = 1
-            print("Click ", pos, "Coordenadas de la reticula: ", fila, columna)
-    pantalla.fill(NEGRO)
-    for fila in range(7):
-        for columna in range(6):
-            color = BLANCO
-            if grid[fila][columna] == 1:
-                color = VERDE
+            if mode == 1:
+                pos = pygame.mouse.get_pos()
+                y = pos[0] // (width + margin)
+                x = pos[1] // (height + margin)
+                if grid[x][y] == 0 and (x, y) in state.moves:
+                    state = game.make_move((x, y), state)
+                    if player == 'X':
+                        grid[x][y] = 1
+                        player = 'O'
+                    else:
+                        grid[x][y] = 2
+                        player = 'X'
+            print("Click ", pos, "Coordenadas de la reticula: ", x, y)
+    pantalla.fill(black)
+    for x in range(7):
+        for y in range(6):
+            color = white
+            if grid[x][y] == 1:
+                color = blue
+            elif grid[x][y] == 2:
+                color = red
             pygame.draw.rect(pantalla,
                              color,
-                             [(MARGEN + LARGO) * columna + MARGEN,
-                              (MARGEN + ALTO) * fila + MARGEN,
-                              LARGO,
-                              ALTO])
+                             [(margin + width) * y + margin,
+                              (margin + height) * x + margin,
+                              width,
+                              height])
+    if game.terminal_test(state):
+        print "Final de la partida"
+        break
 
     reloj.tick(20)
 

@@ -266,7 +266,6 @@ class ConnectFour(TicTacToe):
     def __init__(self, h=7, v=6, k=4):
         update(self, h=h, v=v, k=k)
         moves = [(6, y) for y in range(0, v)]
-        print(moves)
         self.initial = Struct(to_move='X', utility=0, board={}, moves=moves)
 
     def legal_moves(self, state):
