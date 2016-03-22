@@ -9,12 +9,10 @@ ALTO = 20
 MARGEN = 5
 
 grid = []
-for fila in range(10):
+for fila in range(7):
     grid.append([])
-    for columna in range(10):
+    for columna in range(6):
         grid[fila].append(0)
-
-grid[1][5] = 1
 
 pygame.init()
 
@@ -93,6 +91,29 @@ while not done and show_intro:
     pygame.display.flip()
 
 while not done:
+    for evento in pygame.event.get():
+        if evento.type == pygame.QUIT:
+            hecho = True
+        elif evento.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            columna = pos[0] // (LARGO + MARGEN)
+            fila = pos[1] // (ALTO + MARGEN)
+            grid[fila][columna] = 1
+            print("Click ", pos, "Coordenadas de la reticula: ", fila, columna)
+    pantalla.fill(NEGRO)
+    for fila in range(7):
+        for columna in range(6):
+            color = BLANCO
+            if grid[fila][columna] == 1:
+                color = VERDE
+            pygame.draw.rect(pantalla,
+                             color,
+                             [(MARGEN + LARGO) * columna + MARGEN,
+                              (MARGEN + ALTO) * fila + MARGEN,
+                              LARGO,
+                              ALTO])
+
+    reloj.tick(20)
 
     pygame.display.flip()
 
