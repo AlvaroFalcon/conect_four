@@ -22,4 +22,4 @@
 * X*Y board size
 * Maybe some cool background music and/or some more visual effects
 
-If you need something or have some tips for me, dont be shy and [contact](contact.html) me
+If you need something or have some tips for me, dont be shy and [contact](http://alvaroulpgc.github.io/contact.html) me
