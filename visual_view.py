@@ -22,13 +22,13 @@ for x in range(7):
         grid[x].append(0)
 
 pygame.init()
-
+hints = 5
 pantalla = pygame.display.set_mode([700, 500])
 
 pygame.display.set_caption("Connect 4")
 
 done = False
-
+hint_move = (0, 0)
 reloj = pygame.time.Clock()
 
 mode = 1
@@ -101,6 +101,13 @@ while not done:
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
             hecho = True
+        elif evento.type == pygame.KEYDOWN:
+            if evento.key == pygame.K_h:
+                if hints > 0:
+                    hint_move = games.alphabeta_search(state, game, d=6, cutoff_test=None,
+                                                       eval_fn=heuristic.compute_utility(state))
+                    hints -= 1
+                    print hint_move
         elif evento.type == pygame.MOUSEBUTTONDOWN:
             if mode == 1:
                 pos = pygame.mouse.get_pos()
@@ -124,12 +131,6 @@ while not done:
                         grid[x][y] = 1
                         player = 'O'
     pantalla.fill(black)
-    if mode != 1 and player == 'O':
-        print("holita")
-        move = games.alphabeta_search(state, game, d=10, cutoff_test=None, eval_fn=heuristic.compute_utility(state))
-        state = game.make_move(move, state)
-        grid[move[0]][move[1]] = 2
-        player = 'X'
     for x in range(7):
         for y in range(6):
             color = white
@@ -143,12 +144,17 @@ while not done:
                               (margin + height) * x + margin,
                               width,
                               height])
+    pygame.display.flip()
+    if mode != 1 and player == 'O':
+        move = games.alphabeta_search(state, game, d=difficult, cutoff_test=None,
+                                      eval_fn=heuristic.compute_utility(state))
+        state = game.make_move(move, state)
+        grid[move[0]][move[1]] = 2
+        player = 'X'
     if game.terminal_test(state):
         print "Final de la partida"
         break
 
     reloj.tick(20)
-
-    pygame.display.flip()
 
 pygame.quit()
