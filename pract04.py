@@ -45,9 +45,8 @@ while True:
         else:
             print "Thinking..."
             print_board(state)
-            move = games.alphabeta_search(state, game, d=2, cutoff_test=None, eval_fn=heuristic.compute_utility(state))
+            move = games.alphabeta_search(state, game, d=10, cutoff_test=None, eval_fn=heuristic.compute_utility(state))
             # move = games.alphabeta_full_search(state, game)
-            print_board(state)
             state = game.make_move(move, state)
             player = 'X'
         print "-------------------"

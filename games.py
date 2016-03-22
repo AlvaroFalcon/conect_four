@@ -296,7 +296,6 @@ class ConnectFour(TicTacToe):
             return state.utility
         if player == 'O':
             return -state.utility
-            # return state.utility
 
     def terminal_test(self, state):
         "A state is terminal if it is won or there are no empty squares."
@@ -311,7 +310,6 @@ class ConnectFour(TicTacToe):
 
     def compute_utility(self, board, move, player):
         "If X wins with this move, return 1; if O return -1; else return 0."
-        print(board)
         if (self.k_in_row(board, move, player, (0, 1)) or
                 self.k_in_row(board, move, player, (1, 0)) or
                 self.k_in_row(board, move, player, (1, -1)) or
