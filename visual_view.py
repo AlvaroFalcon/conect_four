@@ -114,8 +114,22 @@ while not done:
                     else:
                         grid[x][y] = 2
                         player = 'X'
-            print("Click ", pos, "Coordenadas de la reticula: ", x, y)
+            elif mode == 2:
+                if player == 'X':
+                    pos = pygame.mouse.get_pos()
+                    y = pos[0] // (width + margin)
+                    x = pos[1] // (height + margin)
+                    if grid[x][y] == 0 and (x, y) in state.moves:
+                        state = game.make_move((x, y), state)
+                        grid[x][y] = 1
+                        player = 'O'
     pantalla.fill(black)
+    if mode != 1 and player == 'O':
+        print("holita")
+        move = games.alphabeta_search(state, game, d=10, cutoff_test=None, eval_fn=heuristic.compute_utility(state))
+        state = game.make_move(move, state)
+        grid[move[0]][move[1]] = 2
+        player = 'X'
     for x in range(7):
         for y in range(6):
             color = white
