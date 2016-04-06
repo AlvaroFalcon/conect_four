@@ -57,7 +57,7 @@ def display_endgame():
     t_x = screen.get_width() / 2 - texto_rect.width / 2
     t_y = screen.get_height() / 2 - texto_rect.height / 2
     screen.blit(texto, [t_x, t_y])
-    texto = fuente.render("Ganador: jugador '" + str(player) + "'", True, red)
+    # texto = fuente.render("Ganador: jugador '" + str(player) + "'", True, red)
     screen.blit(texto, [t_x - 40, t_y + 40])
     texto = fuente.render("Presione ESC para salir", True, red)
     screen.blit(texto, [0, 470])
@@ -127,10 +127,11 @@ def display_igtexts():
 def cpu_play():
     global state, cpu_log, player
     move = games.alphabeta_search(state, game, d=difficult, cutoff_test=None,
-                                  eval_fn=heuristic.compute_utility(state))
+                                  eval_fn=heuristic.compute_utility)
     state = game.make_move(move, state)
     grid[move[0]][move[1]] = 2
     cpu_log = "La CPU ha movido en la posicion" + str(move)
+    check_terminal()
     player = 'X'
 
 
@@ -171,7 +172,7 @@ def single_player():
             grid[x][y] = 2
             player = 'X'
             player2_log = "El jugador '" + str(player) + "' ha movido en la posicion: " + str((x, y))
-
+    check_terminal()
 
 def player_play():
     global pos, y, x, state, player, player_log
@@ -184,6 +185,7 @@ def player_play():
             grid[x][y] = 1
             player = 'O'
             player_log = "El jugador ha movido en la posicion: " + str((x, y))
+        check_terminal()
 
 
 while not done and show_intro:
@@ -204,6 +206,13 @@ while not done and show_intro:
     display_intro()
     reloj.tick(20)
     pygame.display.flip()
+
+
+def check_terminal():
+    global done
+    if game.terminal_test(state):
+        done = True
+
 
 while not done:
     for event in pygame.event.get():
@@ -227,9 +236,6 @@ while not done:
     pygame.display.flip()
     if mode != 1 and player == 'O':
         cpu_play()
-    if game.terminal_test(state):
-        done = True
-
 play_end_music()
 while credit_flag:
     for event in pygame.event.get():
