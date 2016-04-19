@@ -28,6 +28,9 @@ def calculateValue(board, move, player, (delta_x, delta_y)):
         if board.get((x, y)) == player:
             h += 50 / distancia
         elif board.get((x, y)) is None:
+            # print("tolete")
+            # print board.get((x+1,y))
+            # print board
             if board.get((x + 1, y)) != None and board.get((x + 1, y)) != player:
                 if board.get((x - 1, y)) != None and board.get((x - 1, y)) != player:
                     h += 500000000

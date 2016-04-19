@@ -320,6 +320,7 @@ class ConnectFour(TicTacToe):
     def k_in_row(self, board, move, player, (delta_x, delta_y)):
         "Return true if there is a line through move on board for player."
         x, y = move
+        print board
         n = 0  # n is number of moves in row
         while board.get((x, y)) == player:
             n += 1
