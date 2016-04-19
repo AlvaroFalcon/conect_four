@@ -5,7 +5,7 @@ from random import randint
 def compute_utility(state):
     x = 0
     # if state.utility != 0:
-    #     return state.utility * infinity
+    #     return state.utility * 10000000000
     for move in state.moves:
         x -= (calculateValue(state.board, move, state.to_move, (0, 1)) +
               calculateValue(state.board, move, state.to_move, (1, 0)) +
@@ -16,7 +16,7 @@ def compute_utility(state):
               calculateValue(state.board, move, player, (1, 0)) +
               calculateValue(state.board, move, player, (1, -1)) +
               calculateValue(state.board, move, player, (1, 1)))
-    print "valor de X", x
+    # print "valor de X", x
     return x
 
 
@@ -26,10 +26,16 @@ def calculateValue(board, move, player, (delta_x, delta_y)):
     h = 0
     while 0 <= x < 6 and 0 <= y < 5:
         if board.get((x, y)) == player:
-            h += 50 * distancia
+            h += 50 / distancia
         elif board.get((x, y)) is None:
-            h += 25 * distancia
-        distancia *= 10
+            if board.get((x + 1, y)) != None and board.get((x + 1, y)) != player:
+                if board.get((x - 1, y)) != None and board.get((x - 1, y)) != player:
+                    h += 500000000
+                    print("holita wey")
+            h+=10
+        else:
+            h += 25 / distancia
+        distancia += 5
         x, y = x + delta_x, y + delta_y
     return h
 

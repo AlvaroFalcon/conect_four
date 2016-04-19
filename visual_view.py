@@ -222,7 +222,7 @@ while not done:
             if event.key == pygame.K_h:
                 if hints > 0:
                     hint_move = games.alphabeta_search(state, game, d=6, cutoff_test=None,
-                                                       eval_fn=heuristic.compute_utility(state))
+                                                       eval_fn=heuristic.compute_utility)
                     hints -= 1
                     hint_flag = 1
         elif event.type == pygame.MOUSEBUTTONDOWN:
