@@ -24,18 +24,15 @@ def calculateValue(board, move, player, (delta_x, delta_y)):
     x, y = move
     distancia = 1
     h = 0
-    while 0 <= x < 6 and 0 <= y < 5:
+    while 0 <= x <= 6 and 0 <= y <= 5:
         if board.get((x, y)) == player:
             h += 50 / distancia
         elif board.get((x, y)) is None:
-            # print("tolete")
-            # print board.get((x+1,y))
-            # print board
-            if board.get((x + 1, y)) != None and board.get((x + 1, y)) != player:
-                if board.get((x - 1, y)) != None and board.get((x - 1, y)) != player:
+            print (x, y)
+            if board.get((x, y + 1)) != None and board.get((x, y + 1)) != player:
+                if board.get((x, y - 1)) != None and board.get((x, y - 1)) != player:
                     h += 500000000
-                    print("holita wey")
-            h+=10
+            h += 10
         else:
             h += 25 / distancia
         distancia += 5
