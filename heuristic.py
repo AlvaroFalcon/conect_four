@@ -4,8 +4,8 @@ from random import randint
 
 def compute_utility(state):
     x = 0
-    # if state.utility != 0:
-    #     return state.utility * 10000000000
+    if state.utility != 0:
+        return state.utility * 10000000000000
     for move in state.moves:
         x -= (calculateValue(state.board, move, state.to_move, (0, 1)) +
               calculateValue(state.board, move, state.to_move, (1, 0)) +
@@ -16,7 +16,6 @@ def compute_utility(state):
               calculateValue(state.board, move, player, (1, 0)) +
               calculateValue(state.board, move, player, (1, -1)) +
               calculateValue(state.board, move, player, (1, 1)))
-    # print "valor de X", x
     return x
 
 
@@ -28,10 +27,9 @@ def calculateValue(board, move, player, (delta_x, delta_y)):
         if board.get((x, y)) == player:
             h += 50 / distancia
         elif board.get((x, y)) is None:
-            print (x, y)
-            if board.get((x, y + 1)) != None and board.get((x, y + 1)) != player:
-                if board.get((x, y - 1)) != None and board.get((x, y - 1)) != player:
-                    h += 500000000
+            if board.get((x, y + 1)) is not None and board.get((x, y + 1)) != player:
+                if board.get((x, y - 1)) is not None and board.get((x, y - 1)) != player:
+                    h += 50000000
             h += 10
         else:
             h += 25 / distancia
@@ -42,3 +40,4 @@ def calculateValue(board, move, player, (delta_x, delta_y)):
 
 def random_heuristic(state):
     return randint(-200, 200)
+

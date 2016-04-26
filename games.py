@@ -5,8 +5,7 @@
 from utils import *
 import random
 
-
-# ______________________________________________________________________________
+#______________________________________________________________________________
 # Minimax Search
 
 def minimax_decision(state, game):
@@ -37,7 +36,7 @@ def minimax_decision(state, game):
     return action
 
 
-# ______________________________________________________________________________
+#______________________________________________________________________________
 
 def alphabeta_full_search(state, game):
     """Search game to determine best action; use alpha-beta pruning.
@@ -72,7 +71,6 @@ def alphabeta_full_search(state, game):
                            lambda ((a, s)): min_value(s, -infinity, infinity))
     return action
 
-
 def alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=None):
     """Search game to determine best action; use alpha-beta pruning.
     This version cuts off search and uses an evaluation function."""
@@ -84,7 +82,7 @@ def alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=None):
             return eval_fn(state)
         v = -infinity
         for (a, s) in game.successors(state):
-            v = max(v, min_value(s, alpha, beta, depth + 1))
+            v = max(v, min_value(s, alpha, beta, depth+1))
             if v >= beta:
                 return v
             alpha = max(alpha, v)
@@ -95,7 +93,7 @@ def alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=None):
             return eval_fn(state)
         v = infinity
         for (a, s) in game.successors(state):
-            v = min(v, max_value(s, alpha, beta, depth + 1))
+            v = min(v, max_value(s, alpha, beta, depth+1))
             if v <= alpha:
                 return v
             beta = min(beta, v)
@@ -104,30 +102,34 @@ def alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=None):
     # Body of alphabeta_search starts here:
     # The default test cuts off at depth d or at a terminal state
     cutoff_test = (cutoff_test or
-                   (lambda state, depth: depth > d or game.terminal_test(state)))
+                   (lambda state,depth: depth>d or game.terminal_test(state)))
     eval_fn = eval_fn or (lambda state: game.utility(state, player))
-    action, state = argmax(game.successors(state),
+
+    lista = game.successors(state)
+
+    # for i in lista:
+    #     print i
+    #     print "------\n"
+
+    action, state = argmax(lista,
                            lambda ((a, s)): min_value(s, -infinity, infinity, 0))
+
     return action
 
-
-# ______________________________________________________________________________
+#______________________________________________________________________________
 # Players for Games
 
 def query_player(game, state):
     "Make a move by querying standard input."
-    # game.display(state)
+    #game.display(state)
     return num_or_str(raw_input('Your move? '))
-
 
 def random_player(game, state):
     "A player that chooses a legal move at random."
     return random.choice(game.legal_moves(state))
 
-
 def alphabeta_player(game, state):
     return alphabeta_search(state, game)
-
 
 def play_game(game, *players):
     "Play an n-person, move-alternating game."
@@ -141,8 +143,7 @@ def play_game(game, *players):
                 print game.display(state)
                 return game.utility(state, 'X')
 
-
-# ______________________________________________________________________________
+#______________________________________________________________________________
 # Some Sample Games
 
 class Game:
@@ -192,11 +193,10 @@ class TicTacToe(Game):
     A state has the player to move, a cached utility, a list of moves in
     the form of a list of (x, y) positions, and a board, in the form of
     a dict of {(x, y): Player} entries, where Player is 'X' or 'O'."""
-
     def __init__(self, h=3, v=3, k=3):
         update(self, h=h, v=v, k=k)
-        moves = [(x, y) for x in range(1, h + 1)
-                 for y in range(1, v + 1)]
+        moves = [(x, y) for x in range(1, h+1)
+                 for y in range(1, v+1)]
         self.initial = Struct(to_move='X', utility=0, board={}, moves=moves)
 
     def legal_moves(self, state):
@@ -205,7 +205,7 @@ class TicTacToe(Game):
 
     def make_move(self, move, state):
         if move not in state.moves:
-            return state  # Illegal move has no effect
+            return state # Illegal move has no effect
         board = state.board.copy()
         board[move] = state.to_move
         moves = list(state.moves)
@@ -220,7 +220,7 @@ class TicTacToe(Game):
             return state.utility
         if player == 'O':
             return -state.utility
-            # return state.utility
+        #return state.utility
 
     def terminal_test(self, state):
         "A state is terminal if it is won or there are no empty squares."
@@ -228,10 +228,13 @@ class TicTacToe(Game):
 
     def display(self, state):
         board = state.board
-        for x in range(1, self.h + 1):
-            for y in range(1, self.v + 1):
+        for y in range(self.v, 0, -1):
+            for x in range(1, self.h+1):
                 print board.get((x, y), '.'),
             print
+        print "-------------------"
+        for n in range(1, self.h+1):
+            print n,
 
     def compute_utility(self, board, move, player):
         "If X wins with this move, return 1; if O return -1; else return 0."
@@ -246,7 +249,7 @@ class TicTacToe(Game):
     def k_in_row(self, board, move, player, (delta_x, delta_y)):
         "Return true if there is a line through move on board for player."
         x, y = move
-        n = 0  # n is number of moves in row
+        n = 0 # n is number of moves in row
         while board.get((x, y)) == player:
             n += 1
             x, y = x + delta_x, y + delta_y
@@ -254,9 +257,8 @@ class TicTacToe(Game):
         while board.get((x, y)) == player:
             n += 1
             x, y = x - delta_x, y - delta_y
-        n -= 1  # Because we counted move itself twice
+        n -= 1 # Because we counted move itself twice
         return n >= self.k
-
 
 class ConnectFour(TicTacToe):
     """A TicTacToe-like game in which you can only make a move on the bottom
@@ -264,69 +266,10 @@ class ConnectFour(TicTacToe):
     played on a 7x6 board and requiring 4 in a row."""
 
     def __init__(self, h=7, v=6, k=4):
-        update(self, h=h, v=v, k=k)
-        moves = [(6, y) for y in range(0, v)]
-        self.initial = Struct(to_move='X', utility=0, board={}, moves=moves)
+        TicTacToe.__init__(self, h, v, k)
 
     def legal_moves(self, state):
         "Legal moves are any square not yet taken."
+
         return [(x, y) for (x, y) in state.moves
-                if y == 0 or (x, y - 1) in state.board]
-
-    def make_move(self, move, state):
-        if move not in state.moves:
-            print("Movimiento invalido, intentelo de nuevo")
-            return state  # Illegal move has no effect
-        board = state.board.copy()
-        board[move] = state.to_move
-        moves = list(state.moves)
-        moves.remove(move)
-        if move[0] > 0:
-            new_move = (move[0] - 1, move[1])
-            moves.append(new_move)
-            moves.sort()
-        return Struct(to_move=if_(state.to_move == 'X', 'O', 'X'),
-                      utility=self.compute_utility(board, move, state.to_move),
-                      board=board, moves=moves)
-
-    def utility(self, state, player):
-        "Return the value to X; 1 for win, -1 for loss, 0 otherwise."
-        if player == 'X':
-            return state.utility
-        if player == 'O':
-            return -state.utility
-
-    def terminal_test(self, state):
-        "A state is terminal if it is won or there are no empty squares."
-        return state.utility != 0 or len(state.moves) == 0
-
-    def display(self, state):
-        board = state.board
-        for x in range(0, self.h):
-            for y in range(0, self.v):
-                print board.get((x, y), '.'),
-            print
-
-    def compute_utility(self, board, move, player):
-        "If X wins with this move, return 1; if O return -1; else return 0."
-        if (self.k_in_row(board, move, player, (0, 1)) or
-                self.k_in_row(board, move, player, (1, 0)) or
-                self.k_in_row(board, move, player, (1, -1)) or
-                self.k_in_row(board, move, player, (1, 1))):
-            return if_(player == 'X', +1, -1)
-        else:
-            return 0
-
-    def k_in_row(self, board, move, player, (delta_x, delta_y)):
-        "Return true if there is a line through move on board for player."
-        x, y = move
-        n = 0  # n is number of moves in row
-        while board.get((x, y)) == player:
-            n += 1
-            x, y = x + delta_x, y + delta_y
-        x, y = move
-        while board.get((x, y)) == player:
-            n += 1
-            x, y = x - delta_x, y - delta_y
-        n -= 1  # Because we counted move itself twice
-        return n >= self.k
+                if y == 1 or (x, y-1) in state.board]

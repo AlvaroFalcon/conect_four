@@ -5,7 +5,7 @@ import heuristic
 game = games.ConnectFour()
 state = game.initial
 
-player = 'X'
+player = 'O'
 player2_log = ""
 credit_flag = True
 player_log = "Comienza el juego!"
@@ -51,16 +51,13 @@ intro_page = 1
 
 def display_endgame():
     global texto
-    screen.fill(black)
     texto = fuente.render("Game Over", True, white)
     texto_rect = texto.get_rect()
     t_x = screen.get_width() / 2 - texto_rect.width / 2
     t_y = screen.get_height() / 2 - texto_rect.height / 2
     screen.blit(texto, [t_x, t_y])
-    # texto = fuente.render("Ganador: jugador '" + str(player) + "'", True, red)
-    screen.blit(texto, [t_x - 40, t_y + 40])
     texto = fuente.render("Presione ESC para salir", True, red)
-    screen.blit(texto, [0, 470])
+    screen.blit(texto, [0, 400])
     pygame.display.flip()
 
 
