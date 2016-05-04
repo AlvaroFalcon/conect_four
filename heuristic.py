@@ -101,30 +101,26 @@ def max_in_row_heuristic(board, move, player, (delta_x, delta_y), best_value):
 def best_move_heuristic(state):
     if state.utility != 0:
         return state.utility * infinity
-    ally_list = [0]
-    enemy_list = [0]
-    iterator_list = [(0, 1), (1, 0), (1, -1), (1, 1), (-1, 0)]
+    ally = 0
+    enemy = 0
+    iterator_list = [(0, 1), (1, 0), (1,-1), (1, 1), (-1, 0)]
     i = 0
     j = 0
     for move in state.moves:
         while i < 5:
-            value = calculate_best(state.board, move, state.to_move, iterator_list[i])
-            if value == 1:
-                ally_list[0] += 1
+            ally += calculate_best(state.board, move, state.to_move, iterator_list[i])
             i += 1
         player = if_(state.to_move == 'X', 'O', 'X')
         while j < 5:
-            value = calculate_best(state.board, move, player, iterator_list[j])
-            if value == 1:
-                enemy_list[0] += 1
+            enemy += calculate_best(state.board, move, player, iterator_list[j])
             j += 1
-    if enemy_list[0] >= ally_list[0]:
-        if ally_list[0] > 3:
+    if ally >= enemy:
+        if ally > 3:
             return 5000
         else:
-            return randint(400, 499)
+            return 400
     else:
-        return randint(300, 399)
+        return -350
     return h
 
 
@@ -137,7 +133,7 @@ def calculate_best(board, move, player, (delta_x, delta_y)):
             if h == 4:
                 return 1
         else:
-            break
+            return 0
         x += delta_x
         y += delta_y
     return 0
