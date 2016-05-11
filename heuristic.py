@@ -42,6 +42,8 @@ def calculateValue(board, move, player, (delta_x, delta_y)):
 #############################################################################
 
 def random_heuristic(state):
+    if state.utility != 0:
+        return state.utility * infinity
     return randint(-200, 200)
 
 
@@ -101,14 +103,9 @@ def max_in_row_heuristic(board, move, player, (delta_x, delta_y), best_value):
 def best_move_heuristic(state):
     if state.utility != 0:
         return state.utility * infinity
-    ally_list = []
-    enemy_list = []
     ally = 0
     h = 0
     enemy = 0
-    iterator_list = [(0, 1), (1, 0), (1,-1), (1, 1), (-1, 0)]
-    i = 0
-    j = 0
     for move in state.moves:
         ally += calculate_best(state.board, move, state.to_move, (0,1))
         ally += calculate_best(state.board, move, state.to_move, (1,0))
@@ -125,7 +122,7 @@ def best_move_heuristic(state):
         enemy += calculate_best(state.board, move, player, (-1,0))
         if ally >= enemy:
             if ally > 3:
-                h+= 5000
+                h+= 50000
             else:
                 h+= 400
         else:
@@ -146,3 +143,63 @@ def calculate_best(board, move, player, (delta_x, delta_y)):
         x += delta_x
         y += delta_y
     return 0
+
+def legal_moves(state):
+    "Legal moves are any square not yet taken."
+    return [(x, y) for (x, y) in state.moves
+            if y == 1 or (x, y-1) in state.board]
+
+###############################################################################
+def best_move_heuristic2(state):
+    if state.utility != 0:
+        return state.utility * infinity
+    ally = 0
+    h = 0
+    enemy = 0
+    moves = legal_moves(state)
+    for move in moves:
+        ally += calculate_best2(state.board, move, state.to_move, (0,1))
+        ally += calculate_best2(state.board, move, state.to_move, (1,0))
+        ally += calculate_best2(state.board, move, state.to_move, (1,-1))
+        ally += calculate_best2(state.board, move, state.to_move, (1,1))
+        ally += calculate_best2(state.board, move, state.to_move, (-1,0))
+        ally += calculate_best2(state.board, move, state.to_move, (0,-1))
+        ally += calculate_best2(state.board, move, state.to_move, (-1,1))
+        ally += calculate_best2(state.board, move, state.to_move, (-1,-1))
+
+        player = if_(state.to_move == 'X', 'O', 'X')
+
+        enemy += calculate_best2(state.board, move, player, (0,1))
+        enemy += calculate_best2(state.board, move, player, (1,0))
+        enemy += calculate_best2(state.board, move, player, (1,-1))
+        enemy += calculate_best2(state.board, move, player, (1,1))
+        enemy += calculate_best2(state.board, move, player, (-1,0))
+        enemy += calculate_best2(state.board, move, player, (0,-1))
+        enemy += calculate_best2(state.board, move, player, (-1,1))
+        enemy += calculate_best2(state.board, move, player, (-1,-1))
+    return ally - enemy
+
+def calculate_best2(board, move, player, (delta_x, delta_y)):
+    h = 0
+    k = 0
+    f = 1
+    x, y = move
+    while 0 < x < 8 and 0 < y < 7:
+        if board.get((x, y)) == player:
+            h += 70
+            k += 1
+            if k == 4:
+                h *= 6
+                return h
+        elif board.get((x, y)) is None:
+            h += 20
+            k += 1
+            if k == 4:
+                h *= 6
+                return h
+        else:
+            return 0
+
+        x += delta_x
+        y += delta_y
+    return h

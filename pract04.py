@@ -56,7 +56,7 @@ while True:
                 print "Imposible mover alli, pruebe otra columna"
         else:
             print "Thinking..."
-            move = games.alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=heuristic.best_move_heuristic)
+            move = games.alphabeta_search(state, game, d=4 , cutoff_test=None, eval_fn=heuristic.best_move_heuristic2)
             state = game.make_move(move, state)
             player = 'O'
         print "-------------------"
