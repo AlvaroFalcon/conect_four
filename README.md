@@ -1,155 +1,93 @@
 # Connect 4
 
-### I'm doing this game for a class project and using teacher's source code. I tried to implement it with a visual view but i had a lot of problems and I had to re-start the project so it's still in process.
-#### I pretend to make the visual view using the external library "pygame", easy and useful.
+This is a project we made for a subject. It's very simle and we based our code in [our teacher's source code](https://github.com/cayetanoguerra/fsi/tree/master/Week%204%20-%20Conecta%204).
 
-#### The current features of the application are:
-
-* Multiplayer (local).
-* Vs CPU(with a difficulty selector).
-* ~~Hint assistance (Ask the heuristic where you should play).~~
-* ~~Tells you the last movement of both players.~~
-* Tells you who's actual playing (player turn).
-* Game over screen which says who won.
-* A good heuristic, still need to be more tested but it works pretty good.
-
-#### The problems I'm having:
-For the moment the only problems I had were with the visual view, now that i changed back to the text-view it works pretty good, never had an exception and fixed things like, you cant put more elements in the column when its full, etc...
+# Table of contents
+* [Features.](#features)
+  * [Player vs player](playervsplayer)
+  * [Player vs CPU](playervscpu)
+  * [CPU vs CPU](cpuvscpu)
+  * [Heuristic](#heuristic)  
+  * [Memoize]()
+* [How does it work?](#howwork)
 
 
-#### Future features for this project:
-* Implementation again of the visual view with all its features.
-* X*Y board size
-* Maybe some cool background music and/or some more visual effects
 
 
-For the moment i'll focus on testing the heuristic and make it godlike, then i'll try to make the visual view again and the future features.
+# Features <a name="features"><a/>  
+## Player vs player  <a name="playervsplayer"><a/>
+We've implemented a feature to allow two players to play.  
+This was the easiest way to start because we could understand the code and check it working.  
+It's very simple, in our game loop (while true) we call our "single_player" function:
 
-
-### How does the heuristic works?
-Well, I'm using my teacher's alpha-beta search source code:
 ```python
+def single_player():
+    global state, player
+    col_str = raw_input("Movimiento: ")
+    y = check_legal_move(int(col_str))
+    coor = int(str(y).strip())
+    x = coor
+    y = -1
+    legal_moves = game.legal_moves(state)
+    for lm in legal_moves:
+        if lm[0] == x:
+            y = lm[1]
+    state = game.make_move((x, y), state)
+    if player == 'X':
+        player = 'O'
+    else:
+        player = 'X'
+```  
 
-def alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=None):
+<a name="endgame"><a/>  
 
-    player = game.to_move(state)
-
-    def max_value(state, alpha, beta, depth):
-        if cutoff_test(state, depth):
-            return eval_fn(state)
-        v = -infinity
-        for (a, s) in game.successors(state):
-            v = max(v, min_value(s, alpha, beta, depth + 1))
-            if v >= beta:
-                return v
-            alpha = max(alpha, v)
-        return v
-
-    def min_value(state, alpha, beta, depth):
-        if cutoff_test(state, depth):
-            return eval_fn(state)
-        v = infinity
-        for (a, s) in game.successors(state):
-            v = min(v, max_value(s, alpha, beta, depth + 1))
-            if v <= alpha:
-                return v
-            beta = min(beta, v)
-        return v
-```
-Where the eval_fn is the heuristic method, which is None if you don't specify it.
-This search the best action you can do based on the heuristic you made, you can make it play better my increasing "d" which means depth but it could cost you some time to have an answer.
-
-Now, the heuristic:
+This function ask us for the column we want to play, does the move and changes the player. After this, we must check our game loop if we've reached a final state (4 in row) with our movement, we do it at the end of our game loop:
 ```python
-def compute_utility(state):
-    x = 0
-    if state.utility != 0:
-        return state.utility * 10000000000000
-    for move in state.moves:
-        x -= (calculateValue(state.board, move, state.to_move, (0, 1)) +
-              calculateValue(state.board, move, state.to_move, (1, 0)) +
-              calculateValue(state.board, move, state.to_move, (1, -1)) +
-              calculateValue(state.board, move, state.to_move, (1, 1)))
-        player = if_(state.to_move == 'X', 'O', 'X')
-        x += (calculateValue(state.board, move, player, (0, 1)) +
-              calculateValue(state.board, move, player, (1, 0)) +
-              calculateValue(state.board, move, player, (1, -1)) +
-              calculateValue(state.board, move, player, (1, 1)))
-    return x
+if game.terminal_test(state):
+    game.display(state)
+    print "Final de la partida"
+    break
+```  
+This functon checks if we've won or lost and stop the game loop in a positive case.
 
+## Player vs CPU <a name="playervscpu"><a/>  
+Once we understood how the Conect Four source code worked, we started implementing a Player vs CPU feature, we just had to create a good [heuristic](#heuristic) for the game and use it on the alphabeta search.
 
-def calculateValue(board, move, player, (delta_x, delta_y)):
-    x, y = move
-    distancia = 1
-    h = 0
-    while 0 <= x <= 6 and 0 <= y <= 5:
-        if board.get((x, y)) == player:
-            h += 50 / distancia
-        elif board.get((x, y)) is None:
-            if board.get((x, y + 1)) is not None and board.get((x, y + 1)) != player:
-                if board.get((x, y - 1)) is not None and board.get((x, y - 1)) != player:
-                    h += 50000000
-            h += 10
-        else:
-            h += 25 / distancia
-        distancia += 5
-        x, y = x + delta_x, y + delta_y
-    return h
-```
-First of all it checks if the actual state it's in a critic situation (win or lose) with this method:
+We also had to "split" the playing modes with a decision at the start of the game (mode selection) and it's as simple as:  
 ```python
-if state.utility != 0:
-    return state.utility * 10000000000000
-```
-state.utility retuns 1 if its a possitive play (win) or -1 if its a negative (lose), so here we check if its != 0 and return the value * a very high value (best value could be infinity). This high value returned will be the key to block/win the game if we got the chance.
-
-The rest of the heuristic it's simple, first it calculates the enemy heuristic-value(for every possible move) for the state (negative value) and then the player(cpu) heuristic-value (positive) and then return the enemy value plus player value
+mode = raw_input("1: Multiplayer, 2: vs CPU")
+```  
+With this we allow the user to select the game mode, we just have to detect in our game loop the game mode and use it. We did this with an if:  
 ```python
-for move in state.moves:
-    x -= (calculateValue(state.board, move, state.to_move, (0, 1)) +
-          calculateValue(state.board, move, state.to_move, (1, 0)) +
-          calculateValue(state.board, move, state.to_move, (1, -1)) +
-          calculateValue(state.board, move, state.to_move, (1, 1)))
-    player = if_(state.to_move == 'X', 'O', 'X')
-    x += (calculateValue(state.board, move, player, (0, 1)) +
-          calculateValue(state.board, move, player, (1, 0)) +
-          calculateValue(state.board, move, player, (1, -1)) +
-          calculateValue(state.board, move, player, (1, 1)))
-return x
-```
-Well, here is how to calculate the heuristic-value:
-```python
-def calculateValue(board, move, player, (delta_x, delta_y)):
-    x, y = move
-    distance = 1
-    h = 0
-    while 0 <= x <= 6 and 0 <= y <= 5:
-        if board.get((x, y)) == player:
-            h += 50 / distance
-        elif board.get((x, y)) is None:
-            if board.get((x, y + 1)) is not None and board.get((x, y + 1)) != player:
-                if board.get((x, y - 1)) is not None and board.get((x, y - 1)) != player:
-                    h += 50000000
-            h += 10
-        else:
-            h += 25 / distance
-        distance += 5
-        x, y = x + delta_x, y + delta_y
-    return h
-```
-This is very simple, it returns a value for the actual move depending of the state, getting a different value if it finds an enemy, a player or a None(every time it finds an enemy or player, it will divide the value by the "distance").
+if int(mode) == 1:
+      single_player()
+  if int(mode) == 2:
+      if player == 'O':
+          col_str = raw_input("Movimiento: ")
+          y = check_legal_move(int(col_str))
+          coor = int(str(y).strip())
+          x = coor
+          y = -1
+          legal_moves = game.legal_moves(state)
+          for lm in legal_moves:
+              if lm[0] == x:
+                  y = lm[1]
+          state = game.make_move((x, y), state)
+          if y >= 0:
+              player = 'X'
+          else:
+              print "Imposible mover alli, pruebe otra columna"
+      else:
+          print "Thinking..."
+          move = games.alphabeta_search(state, game, d=4 , cutoff_test=None, eval_fn=heuristic.best_move_heuristic2)
+          state = game.make_move(move, state)
+          player = 'O'
+```  
+As you can see, we decide which game mode we're using based on the input number at the start. Our "mode 2" is the vs CPU feature, what we do here is firstly, detect which player is currently playing (X is the CPU, O the player), if the player is 'O', we do the movement with an input number (column) and before doing the movement we check if that was a valid column, in a negative case, the player must select another column.  
 
-I thought of improving it by adding a random positive number if it finds a None (Still have to test it)
+When the player is 'X' it means that's the CPU turn's, here we do the movement calling our alphabeta search with our heuristic and a depth (depending on the difficult).
 
-The calculateValue checks too if the board its like:
+# CPU vs CPU <a name="cpuvscpu"></a>  
+## Still not implemented
 
-X-O-O---X
-
-If you have a blank (None) betweens two enemies, it will give a very high value (to block it) because it's probably a play trying to fool the heuristic(The value will be below the winning/losing returned value, to keep it the most important)
-
-### Future changes to the heuristic:
-* Memoize to make it faster and better
-* Test adding a random possitive value (below the player default value)
-* Test dividing the enemy value and multiplying the player value
-
-If you need something or have some tips for me, dont be shy and [contact](http://alvaroulpgc.github.io/contact.html) me
+#Heuristic <a name="Heuristic"></a>

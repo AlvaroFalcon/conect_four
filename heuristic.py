@@ -188,14 +188,15 @@ def calculate_best2(board, move, player, (delta_x, delta_y)):
         if board.get((x, y)) == player:
             h += 70
             k += 1
+            f+=1
             if k == 4:
-                h *= 6
+                h *= f
                 return h
         elif board.get((x, y)) is None:
             h += 20
             k += 1
             if k == 4:
-                h *= 6
+                h *= f
                 return h
         else:
             return 0
