@@ -4,13 +4,28 @@ import heuristic
 game = games.ConnectFour()
 state = game.initial
 
-mode = raw_input("1: Multiplayer, 2: vs CPU, 3:CPU vs CPU")
-turn = raw_input("1:First, 2: Second")
+mode = raw_input("1: Multiplayer, 2: vs CPU, 3: CPU vs CPU")
 
-if int(turn) == 1:
-    player = 'O'
-else:
+while int(mode) > 3 or int(mode) < 1:
+    print "Incorrect mode, please try again"
+    mode = raw_input("1: Multiplayer, 2: vs CPU, 3: CPU vs CPU")
+if int(mode) == 1 or int(mode) == 3:
     player = 'X'
+else:
+    turn = raw_input("1: First, 2: Second")
+    if int(turn) > 2 or int(turn) < 1:
+        while int(turn) > 2 or int(turn) < 1:
+            print "Incorrect, please try again"
+            turn = raw_input("1: First, 2: Second")
+    if int(turn) == 1:
+        player = 'O'
+    else:
+        player = 'X'
+
+    difficult = raw_input("1: Easy, 2: Medium, 3: Hard")
+    while difficult < 1 or difficult > 3:
+        print "Incorrect difficult, please try again"
+        difficult = raw_input("1: Easy, 2: Medium, 3: Hard")
 
 
 def check_legal_move(y):
@@ -19,7 +34,7 @@ def check_legal_move(y):
     return y
 
 
-def single_player():
+def multi_player():
     global state, player
     col_str = raw_input("Move: ")
     y = check_legal_move(int(col_str))
@@ -35,7 +50,7 @@ def single_player():
         player = 'O'
     else:
         player = 'X'
-Game over
+
 def cpu_play():
     global state, player
     if player == 'X':
@@ -51,10 +66,10 @@ def cpu_play():
 
 
 while True:
-    print "Jugador a mover:", game.to_move(state)
+    print "Player to move:", game.to_move(state)
     game.display(state)
     if int(mode) == 1:
-        single_player()
+        multi_player()
         if game.terminal_test(state):
             game.display(state)
             print "Game over"
@@ -83,7 +98,12 @@ while True:
                 print "Cant move there, try another column"
         else:
             print "Thinking..."
-            move = games.alphabeta_search(state, game, d=4 , cutoff_test=None, eval_fn=heuristic.best_move_heuristic2)
+            if int(difficult) == 2:
+                move = games.alphabeta_search(state, game, d=4 , cutoff_test=None, eval_fn=heuristic.best_move_heuristic2)
+            elif int(difficult) == 3:
+                move = games.alphabeta_search(state, game, d=5 , cutoff_test=None, eval_fn=heuristic.best_move_heuristic2)
+            else:
+                move = games.alphabeta_search(state, game, d=4 , cutoff_test=None, eval_fn=heuristic.random_heuristic)
             state = game.make_move(move, state)
             player = 'O'
         print "-------------------"
