@@ -4,28 +4,28 @@ import heuristic
 game = games.ConnectFour()
 state = game.initial
 
-mode = raw_input("1: Multiplayer, 2: vs CPU, 3: CPU vs CPU")
+mode = raw_input("1: Multiplayer, 2: vs CPU, 3: CPU vs CPU ")
 
 while int(mode) > 3 or int(mode) < 1:
     print "Incorrect mode, please try again"
-    mode = raw_input("1: Multiplayer, 2: vs CPU, 3: CPU vs CPU")
+    mode = raw_input("1: Multiplayer, 2: vs CPU, 3: CPU vs CPU ")
 if int(mode) == 1 or int(mode) == 3:
     player = 'X'
 else:
-    turn = raw_input("1: First, 2: Second")
+    turn = raw_input("1: First, 2: Second ")
     if int(turn) > 2 or int(turn) < 1:
         while int(turn) > 2 or int(turn) < 1:
             print "Incorrect, please try again"
-            turn = raw_input("1: First, 2: Second")
+            turn = raw_input("1: First, 2: Second ")
     if int(turn) == 1:
         player = 'O'
     else:
         player = 'X'
 
-    difficult = raw_input("1: Easy, 2: Medium, 3: Hard")
-    while difficult < 1 or difficult > 3:
+    difficult = raw_input("1: Easy, 2: Medium, 3: Hard ")
+    while int(difficult) < 1 or int(difficult) > 3:
         print "Incorrect difficult, please try again"
-        difficult = raw_input("1: Easy, 2: Medium, 3: Hard")
+        difficult = raw_input("1: Easy, 2: Medium, 3: Hard ")
 
 
 def check_legal_move(y):

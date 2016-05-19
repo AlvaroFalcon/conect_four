@@ -42,8 +42,12 @@ def calculateValue(board, move, player, (delta_x, delta_y)):
 #############################################################################
 
 def random_heuristic(state):
-    if state.utility != 0:
-        return state.utility * infinity
+    if state.to_move == 'X':
+        if state.utility != 0:
+            return state.utility * infinity
+    else:
+        if state.utility != 0:
+            return state.utility * -infinity
     return randint(-200, 200)
 
 
@@ -151,8 +155,12 @@ def legal_moves(state):
 
 ###############################################################################
 def best_move_heuristic2(state):
-    if state.utility != 0:
-        return state.utility * infinity
+    if state.to_move == 'X':
+        if state.utility != 0:
+            return state.utility * infinity
+    else:
+        if state.utility != 0:
+            return state.utility * -infinity
     ally = 0
     h = 0
     enemy = 0
