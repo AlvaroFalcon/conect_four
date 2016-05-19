@@ -18,10 +18,10 @@ This is a project we made for a subject. It's very simle and we based our code i
 ## Player vs player  <a name="playervsplayer"><a/>
 We've implemented a feature to allow two players to play.  
 This was the easiest way to start because we could understand the code and check it working.  
-It's very simple, in our game loop (while true) we call our "single_player" function:
+It's very simple, in our game loop (while true) we call our "multi_player" function:
 
 ```python
-def single_player():
+def multi_player():
     global state, player
     col_str = raw_input("Movimiento: ")
     y = check_legal_move(int(col_str))
@@ -45,7 +45,7 @@ This function ask us for the column we want to play, does the move and changes t
 ```python
 if game.terminal_test(state):
     game.display(state)
-    print "Final de la partida"
+    print "Game over"
     break
 ```  
 This functon checks if we've won or lost and stop the game loop in a positive case.
@@ -55,8 +55,9 @@ Once we understood how the Conect Four source code worked, we started implementi
 
 We also had to "split" the playing modes with a decision at the start of the game (mode selection) and it's as simple as:  
 ```python
-mode = raw_input("1: Multiplayer, 2: vs CPU")
+mode = raw_input("1: Multiplayer, 2: vs CPU, 3: CPU vs CPU ")
 ```  
+After this, we had to control
 With this we allow the user to select the game mode, we just have to detect in our game loop the game mode and use it. We did this with an if:  
 ```python
 if int(mode) == 1:
@@ -90,4 +91,4 @@ When the player is 'X' it means that's the CPU turn's, here we do the movement c
 # CPU vs CPU <a name="cpuvscpu"></a>  
 ## Still not implemented
 
-#Heuristic <a name="Heuristic"></a>
+#Heuristic <a name="heuristic"></a>
