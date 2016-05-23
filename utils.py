@@ -225,7 +225,7 @@ infinity = 1.0e400
 
 
 def Dict(**entries):
-    """Create a dict out of the argument=value arguments. 
+    """Create a dict out of the argument=value arguments.
     >>> Dict(a=1, b=2, c=3)
     {'a': 1, 'c': 3, 'b': 2}
     """
@@ -609,7 +609,7 @@ def caller(n=1):
     """Return the name of the calling function n levels up in the frame stack.
     >>> caller(0)
     'caller'
-    >>> def f(): 
+    >>> def f():
     ...     return caller()
     >>> f()
     'f'
@@ -632,9 +632,12 @@ def memoize(fn, slot=None):
                 return val
     else:
         def memoized_fn(*args):
-            if not memoized_fn.cache.has_key(args):
-                memoized_fn.cache[args] = fn(*args)
-            return memoized_fn.cache[args]
+            state = args[0]
+            memo_list = (state.to_move,tuple(state.moves),tuple(state.board.items()),state.utility)
+            memo_list = tuple(memo_list)
+            if not memoized_fn.cache.has_key(memo_list):
+                memoized_fn.cache[memo_list] = fn(args[0])
+            return memoized_fn.cache[memo_list]
 
         memoized_fn.cache = {}
     return memoized_fn
