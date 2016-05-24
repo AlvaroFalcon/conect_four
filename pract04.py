@@ -4,28 +4,28 @@ import heuristic
 game = games.ConnectFour()
 state = game.initial
 
-mode = raw_input("1: Multiplayer, 2: vs CPU, 3: CPU vs CPU ")
+mode = raw_input("1: Multiplayer, 2: vs CPU, 3: CPU vs CPU")
 
 while int(mode) > 3 or int(mode) < 1:
     print "Incorrect mode, please try again"
-    mode = raw_input("1: Multiplayer, 2: vs CPU, 3: CPU vs CPU ")
+    mode = raw_input("1: Multiplayer, 2: vs CPU, 3: CPU vs CPU")
 if int(mode) == 1 or int(mode) == 3:
     player = 'X'
 else:
-    turn = raw_input("1: First, 2: Second ")
+    turn = raw_input("1: First, 2: Second")
     if int(turn) > 2 or int(turn) < 1:
         while int(turn) > 2 or int(turn) < 1:
             print "Incorrect, please try again"
-            turn = raw_input("1: First, 2: Second ")
+            turn = raw_input("1: First, 2: Second")
     if int(turn) == 1:
         player = 'O'
     else:
         player = 'X'
 
-    difficult = raw_input("1: Easy, 2: Medium, 3: Hard ")
-    while int(difficult) < 1 or int(difficult) > 3:
+    difficult = raw_input("1: Easy, 2: Medium, 3: Hard")
+    while int(difficult) < 1 or int (difficult) > 3:
         print "Incorrect difficult, please try again"
-        difficult = raw_input("1: Easy, 2: Medium, 3: Hard ")
+        difficult = raw_input("1: Easy, 2: Medium, 3: Hard")
 
 
 def check_legal_move(y):
@@ -101,7 +101,7 @@ while True:
             if int(difficult) == 2:
                 move = games.alphabeta_search(state, game, d=4 , cutoff_test=None, eval_fn=heuristic.best_move_heuristic2)
             elif int(difficult) == 3:
-                move = games.alphabeta_search(state, game, d=5 , cutoff_test=None, eval_fn=heuristic.best_move_heuristic2)
+                move = games.alphabeta_search(state, game, d=6 , cutoff_test=None, eval_fn=heuristic.best_move_heuristic2)
             else:
                 move = games.alphabeta_search(state, game, d=4 , cutoff_test=None, eval_fn=heuristic.random_heuristic)
             state = game.make_move(move, state)

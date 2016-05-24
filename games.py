@@ -76,10 +76,11 @@ def alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=None):
     This version cuts off search and uses an evaluation function."""
 
     player = game.to_move(state)
-#    memo = memoize(eval_fn)
+    # memo = memoize(eval_fn)
     def max_value(state, alpha, beta, depth):
         if cutoff_test(state, depth):
             return eval_fn(state)
+            # return memo(state)
         v = -infinity
         for (a, s) in game.successors(state):
             v = max(v, min_value(s, alpha, beta, depth+1))
@@ -91,6 +92,7 @@ def alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=None):
     def min_value(state, alpha, beta, depth):
         if cutoff_test(state, depth):
             return eval_fn(state)
+            # return memo(state)
         v = infinity
         for (a, s) in game.successors(state):
             v = min(v, max_value(s, alpha, beta, depth+1))

@@ -636,7 +636,7 @@ def memoize(fn, slot=None):
             memo_list = (state.to_move,tuple(state.moves),tuple(state.board.items()),state.utility)
             memo_list = tuple(memo_list)
             if not memoized_fn.cache.has_key(memo_list):
-                memoized_fn.cache[memo_list] = fn(args[0])
+                memoized_fn.cache[memo_list] = fn(state)
             return memoized_fn.cache[memo_list]
 
         memoized_fn.cache = {}

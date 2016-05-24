@@ -251,3 +251,72 @@ def cpu_play():
         state = game.make_move(move, state)
         player = 'X'
 ```
+# Memoize <a name="memo"></a>
+To implement the memoize in our connect_four, we used the method "memoize" in utils.py:
+```python
+def memoize(fn, slot=None):
+    """Memoize fn: make it remember the computed value for any argument list.
+    If slot is specified, store result in that slot of first argument.
+    If slot is false, store results in a dictionary."""
+    if slot:
+        def memoized_fn(obj, *args):
+            if hasattr(obj, slot):
+                return getattr(obj, slot)
+            else:
+                val = fn(obj, *args)
+                setattr(obj, slot, val)
+                return val
+    else:
+        def memoized_fn(*args):
+            if not memoized_fn.cache.has_key(args):
+                memoized_fn.cache[args] = fn(*args)
+            return memoized_fn.cache[args]
+
+        memoized_fn.cache = {}
+    return memoized_fn
+
+```
+We had to change the second memoized_fn because we need to make the state inmutable. We did it to make the state be the dictionary key:
+
+```python
+        def memoized_fn(*args):
+            state = args[0]
+            memo_list = (state.to_move,tuple(state.moves),tuple(state.board.items()),state.utility)
+            memo_list = tuple(memo_list)
+            if not memoized_fn.cache.has_key(memo_list):
+                memoized_fn.cache[memo_list] = fn(state)
+            return memoized_fn.cache[memo_list]
+```
+After this, we had to change the calls in the alphabeta_search:
+```python
+def alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=None):
+    """Search game to determine best action; use alpha-beta pruning.
+    This version cuts off search and uses an evaluation function."""
+
+    player = game.to_move(state)
+    memo = memoize(eval_fn)
+    def max_value(state, alpha, beta, depth):
+        if cutoff_test(state, depth):
+            #return eval_fn(state)
+            return memo(state)
+        v = -infinity
+        for (a, s) in game.successors(state):
+            v = max(v, min_value(s, alpha, beta, depth+1))
+            if v >= beta:
+                return v
+            alpha = max(alpha, v)
+        return v
+
+    def min_value(state, alpha, beta, depth):
+        if cutoff_test(state, depth):
+            #return eval_fn(state)
+            return memo(state)
+        v = infinity
+        for (a, s) in game.successors(state):
+            v = min(v, max_value(s, alpha, beta, depth+1))
+            if v <= alpha:
+                return v
+            beta = min(beta, v)
+        return v
+
+```
