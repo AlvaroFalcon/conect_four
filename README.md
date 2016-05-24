@@ -11,7 +11,7 @@ This is a project we made for a subject. It's very simle and we based our code i
         * [Random](#random)  
         * [Best move](#best)  
   * [CPU vs CPU](#cpuvscpu)
-  * [Memoize]()
+  * [Memoize](#memo)
 
 
 # How does it work? <a name="howwork"><a/>  
